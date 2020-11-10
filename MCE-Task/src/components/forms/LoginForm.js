@@ -8,11 +8,11 @@ class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: { name: "", password: "" },
+      form: { name: "", email: "" },
       showsucc: false,
       formErrors: {
         name: null,
-        password: null,
+        email: null,
       },
       showExpAlert: false,
     };
@@ -34,8 +34,8 @@ class LoginForm extends Component {
     this.setState({ form: formObj }, () => {
       if (!Object.keys(formErrors).includes(name)) return;
       let formErrorsObj = {};
-      if (name === "name" || name === "password") {
-        let refValue = this.state.form[name === "name" ? "password" : "name"];
+      if (name === "name" || name === "email") {
+        let refValue = this.state.form[name === "name" ? "email" : "name"];
         const errorMsg = this.validateField(name, value, refValue);
         formErrorsObj = { ...formErrors, [name]: errorMsg };
       } else {
@@ -57,8 +57,15 @@ class LoginForm extends Component {
         else if (value.length < 3)
           errorMsg = "Name must be at least 3 Characters";
         break;
-      case "password":
-        if (!value) errorMsg = "*Password is required";
+      case "email":
+        if (!value) errorMsg = "*Email is required";
+        else if (
+          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+            value
+          )
+        )
+          errorMsg = "Please enter a valid Email.";
+        break;
         break;
 
       default:
@@ -84,7 +91,12 @@ class LoginForm extends Component {
       this.setState({ formErrors: { ...formErrors, ...errorObj } });
       return false;
     } else {
-      this.props.Login(form.name);
+      let userdata = {};
+      userdata.name = form.name;
+      userdata.email = form.email;
+      this.props.Login({
+        userdata,
+      });
       console.log("loggedIn");
       this.props.history.push("/UserBoard/Profile");
     }
@@ -107,14 +119,14 @@ class LoginForm extends Component {
         </FormGroup>
         <FormGroup>
           <Input
-            type="password"
-            name="password"
-            value={form.password}
+            type="email"
+            name="email"
+            value={form.email}
             onChange={this.onEnterData}
-            placeholder="Enter your password"
+            placeholder="Enter your email"
           />
-          {formErrors.password && (
-            <span className="inquiryerr">{formErrors.password}</span>
+          {formErrors.email && (
+            <span className="inquiryerr">{formErrors.email}</span>
           )}
         </FormGroup>
 

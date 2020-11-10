@@ -25,9 +25,8 @@ const store = createStore(
 
 store.subscribe(() => {
   saveState({
-    isAuth: store.getState().auth.isAuth,
+    auth: store.getState().auth,
     Profile: store.getState().Profile,
-    username: store.getState().auth.userdata,
   });
 });
 ReactDOM.render(
